@@ -3,8 +3,6 @@ PhpServerView = require './php-server-view'
 {spawn, exec} = require 'child_process'
 open = require 'open'
 portfinder = require 'portfinder'
-{MessagePanelView, PlainMessageView} = require 'atom-message-panel'
-
 
 module.exports =
   server: null
@@ -20,44 +18,26 @@ module.exports =
   start: ->
     if !@server
       portfinder.getPort (err, port) =>
-        #@log = atom.workspace.addBottomPanel(item: new PhpServerView)
-        #@log.show()
-
-        @messages = new MessagePanelView(
+        @messages = new PhpServerView(
             title: "PHP Server: http://localhost:#{port}"
         )
         @messages.attach()
-        console.log @messages.body
 
         projectPath = atom.project.getPath()
 
         @server = spawn "php", ["-S", "localhost:#{port}"], env: process.env, cwd: projectPath
 
         @server.once 'exit', (code) =>
-          console.log 'exit'
-          @server = null
-          @messages.clear()
-          @messages.detach()
+          console.log 'exit', code if code != 0
 
         @server.on 'error', (err) =>
           console.log 'error', err
-          @server = null
-          @messages.clear()
-          @messages.detach()
 
         @server.stdout.on 'data', (data) =>
-          @messages.add(new PlainMessageView(
-            message: data.asciiSlice()
-          ))
-          @messages.toggle() if !@messages.body.isVisible()
-          @messages.body.scrollToBottom()
+          #console.log 'stdout', data.asciiSlice()
 
         @server.stderr.on 'data', (data) =>
-          @messages.add(new PlainMessageView(
-            message: data.asciiSlice()
-          ))
-          @messages.toggle() if !@messages.body.isVisible()
-          @messages.body.scrollToBottom()
+          @messages.addMessage data.asciiSlice()
 
         open "http://localhost:#{port}"
 
@@ -66,4 +46,7 @@ module.exports =
 
   stop: ->
     # Send Ctrl+C
-    @server.kill('SIGINT') if @server
+    @server?.kill('SIGINT')
+    @server = null
+    @messages.clear()
+    @messages.detach()
