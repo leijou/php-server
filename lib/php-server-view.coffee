@@ -21,8 +21,7 @@ module.exports =
         @body.scrollToBottom()
 
     addError: (lines) ->
-      for text in lines.split "\n"
-        @add(new PlainMessageView(
-          message: text
-          className: 'text-error'
-        ))
+      @add(new PlainMessageView(
+        message: lines
+        className: 'text-error'
+      ))

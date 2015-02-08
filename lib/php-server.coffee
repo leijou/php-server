@@ -38,12 +38,12 @@ module.exports =
       @server = new PhpServerServer atom.project.getPath()
       freshstart = true
 
-      @server.path = atom.config.get('php-server.phpPath')
-      @server.host = atom.config.get('php-server.localhost')
-      @server.basePort = atom.config.get('php-server.startPort')
-
       @server.onError (err) =>
-        console.error 'error', err
+        console.error err
+
+    @server.path = atom.config.get('php-server.phpPath')
+    @server.host = atom.config.get('php-server.localhost')
+    @server.basePort = atom.config.get('php-server.startPort')
 
     if !@view
       @view = new PhpServerView(
@@ -54,7 +54,11 @@ module.exports =
         @view.addMessage message
 
       @server.onError (message) =>
-        @view.addError message
+        if message.code == 'ENOENT'
+          @view.addError "PHP Server could not launch"
+          @view.addError "Have you defined the right path to PHP in your settings? Using #{@server.path}"
+        else
+          @view.addError message.message
 
     @view.attach()
 
