@@ -1,7 +1,9 @@
 # PHP Server
 
-Run the built-in PHP server from the project root and display the log in a bottom pane.
+An Atom package to run PHP's built-in development server from the project root and display the log in a bottom pane.
 
-I'm very new to Atom & coffeescript so this is very basic and experimental. Pull request are very welcome.
+## Commands
 
-```ctrl-alt-p: launch server / re-open log pane```
+* `php-server:start` &mdash; Start / Restart PHP server from project path
+* `php-server:stop` &mdash; Stop running PHP server
+* `php-server:clear` &mdash; Clear message panel
