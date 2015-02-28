@@ -37,12 +37,12 @@ module.exports =
 
       if @port
         @innerStart()
-        callback?()
+        callback?() if @server
       else
         portfinder.getPort (err, port) =>
           @port = port
           @innerStart()
-          callback?()
+          callback?() if @server
 
     stop: (callback) ->
       @innerStop() if @server
@@ -50,18 +50,24 @@ module.exports =
 
 
     innerStart: ->
-      @server = spawn @path, ["-S", "#{@host}:#{@port}"], env: process.env, cwd: @documentRoot
+      try
+        @server = spawn @path, ["-S", "#{@host}:#{@port}"], env: process.env, cwd: @documentRoot
 
-      @server.once 'exit', (code) =>
-        @emitter.emit 'error', code if code != 0
+        @server.once 'exit', (code) =>
+          @emitter.emit 'error', code if code != 0
 
-      @server.on 'error', (err) =>
+        @server.on 'error', (err) =>
+          @emitter.emit 'error', err
+
+        @server.stderr.on 'data', (data) =>
+          @emitter.emit 'message', data.asciiSlice()
+
+        @href = "http://#{@host}:#{@port}"
+
+      catch err
+        @server = null
         @emitter.emit 'error', err
 
-      @server.stderr.on 'data', (data) =>
-        @emitter.emit 'message', data.asciiSlice()
-
-      @href = "http://#{@host}:#{@port}"
 
     innerStop: ->
       # Send Ctrl+C

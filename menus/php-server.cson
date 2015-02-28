@@ -1,0 +1,23 @@
+'context-menu':
+  '.tree-view': [
+    {type: 'separator'}
+    {label: 'PHP Server here', command: 'php-server:start-tree'}
+    {type: 'separator'}
+  ]
+  'atom-text-editor': [
+    {type: 'separator'}
+    {label: 'PHP Server here', command: 'php-server:start-document'}
+    {type: 'separator'}
+  ]
+
+'menu': [{
+  label: 'Packages'
+  submenu: [
+    label: 'PHP Server',
+    submenu: [
+      { label: 'Start in project root', command: 'php-server:start' }
+      { label: 'Start in folder selected in tree', command: 'php-server:start-tree' }
+      { label: 'Start in folder of current file', command: 'php-server:start-document' }
+    ]
+  ]
+}]

@@ -4,7 +4,9 @@
   "version": "0.2.0",
   "description": "Inbuilt PHP server for development",
   "activationCommands": {
-    "atom-workspace": "php-server:start"
+    "atom-workspace": "php-server:start",
+    ".tree-view": "php-server:start-tree",
+    "atom-text-editor": "php-server:start-document"
   },
   "repository": "https://github.com/leijou/php-server",
   "license": "MIT",
