@@ -1,8 +1,14 @@
 # PHP Server
 
-An Atom package to run PHP's built-in development server and display the log in a bottom pane.
+An Atom package to run PHP's built-in development server and display the log in a bottom pane. Can be started from any folder in the tree, the currently opened file, or the project root.
 
-Can be started in the project root or in a specific subfolder in the tree using the context menu.
+![Screenshot](http://i.imgur.com/FhVtl9v.png)
+
+## Requirements
+
+PHP must be installed on your machine, version 5.4 or greater.
+
+If `php` is not in your system PATH you will need to put in the full path to your PHP executable in the settings of this package.
 
 ## Commands
 

@@ -2,7 +2,7 @@
   "name": "php-server",
   "main": "./lib/php-server",
   "version": "0.3.0",
-  "description": "Inbuilt PHP server for development",
+  "description": "Run a local PHP server from within Atom, displaying the log in a bottom panel",
   "activationCommands": {
     "atom-workspace": "php-server:start",
     ".tree-view": "php-server:start-tree",
