@@ -7,6 +7,7 @@ module.exports =
   config:
     phpPath:
       title: 'Path to PHP Executable'
+      description: 'On Windows this might need to be the full path to php.exe'
       type: 'string'
       default: 'php'
     localhost:
@@ -25,9 +26,9 @@ module.exports =
       default: ''
     overrideErrorlog:
       title: 'Override error log'
-      description: 'Redirect error log to panel in Atom. Overrides ini settings'
+      description: 'Redirect error log to panel in Atom. Overrides ini settings. May not work on Windows'
       type: 'boolean'
-      default: true
+      default: false
 
   server: null
   view: null
