@@ -36,6 +36,7 @@ module.exports =
   activate: ->
     atom.commands.add 'atom-workspace', "php-server:start", => @start()
     atom.commands.add 'atom-workspace', "php-server:start-tree", => @startTree()
+    atom.commands.add 'atom-workspace', "php-server:start-tree-route", => @startTreeRoute()
     atom.commands.add 'atom-workspace', "php-server:start-document", => @startDocument()
     atom.commands.add 'atom-workspace', "php-server:clear", => @clear()
     atom.commands.add 'atom-workspace', "php-server:stop", => @stop()
@@ -46,14 +47,28 @@ module.exports =
 
 
   startTree: ->
-    @start(atom.packages.getLoadedPackage('tree-view').serialize().selectedPath)
+    @start atom.packages.getLoadedPackage('tree-view').serialize().selectedPath
+
+
+  startTreeRoute: ->
+    [path, basename] = @splitPath atom.packages.getLoadedPackage('tree-view').serialize().selectedPath
+    @start path, basename
 
 
   startDocument: ->
     @start(atom.workspace.getActiveEditor()?.getPath())
 
 
-  start: (documentroot) ->
+  splitPath: (path) ->
+    basename = false
+    if !fs.lstatSync(path).isDirectory()
+      basename = path.split(/[\\/]/).pop()
+      path = path.substring(0, Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\")))
+
+    return [path, basename]
+
+
+  start: (documentroot, router) ->
     # Stop server if currently running
     if @server
       @server.stop()
@@ -63,12 +78,9 @@ module.exports =
     if !documentroot
       documentroot = atom.project.getPath()
 
-    basename = false
-    if !fs.lstatSync(documentroot).isDirectory()
-      basename = documentroot.split(/[\\/]/).pop()
-      documentroot = documentroot.substring(0, Math.max(documentroot.lastIndexOf("/"), documentroot.lastIndexOf("\\")))
+    [documentroot, basename] = @splitPath documentroot
 
-    @server = new PhpServerServer documentroot
+    @server = new PhpServerServer documentroot, router
 
     # Pass package settings
     @server.path = atom.config.get('php-server.phpPath')

@@ -2,6 +2,7 @@
   '.tree-view': [
     {type: 'separator'}
     {label: 'PHP Server here', command: 'php-server:start-tree'}
+    {label: 'PHP Server route file', command: 'php-server:start-tree-route'}
     {type: 'separator'}
   ]
   'atom-text-editor': [

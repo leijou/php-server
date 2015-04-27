@@ -13,13 +13,14 @@ module.exports =
 
     # Properties
     documentRoot: null
+    routerFile: null
     href: null
 
     # Protected
     server: null
 
 
-    constructor: (@documentRoot) ->
+    constructor: (@documentRoot, @routerFile) ->
       @emitter = new Emitter
 
 
@@ -43,7 +44,7 @@ module.exports =
       portfinder.getPort (err, port) =>
         try
           # Build CLI options
-          options = ["-S", "#{@host}:#{port}"]
+          options = []
 
           if @overrideErrorlog
             # ini settings for errors to be logged to stderr
@@ -52,6 +53,13 @@ module.exports =
           if @ini
             # Set specified php.ini file
             options.push "-c", @ini
+
+          options.push "-S", "#{@host}:#{port}"
+
+          if @routerFile
+            # Use given file as request router
+            options.push @routerFile
+
 
           # Spawn PHP server process
           @server = spawn @path, options, env: process.env, cwd: @documentRoot
