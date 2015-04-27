@@ -13,73 +13,86 @@ module.exports =
 
     # Properties
     documentRoot: null
-    port: null
     href: null
 
     # Protected
     server: null
-    disposables: null
 
-    constructor: (@documentRoot, @port) ->
+
+    constructor: (@documentRoot) ->
       @emitter = new Emitter
+
 
     destroy: ->
       @stop()
 
 
-    onMessage: (callback) ->
-      @emitter.on 'message', callback
+    on: (eventName, handler) ->
+      @emitter.on eventName, handler
 
-    onError: (callback) ->
-      @emitter.on 'error', callback
+
+    preempt: (eventName, handler) ->
+      @emitter.preempt eventName, handler
 
 
     start: (callback) ->
       @stop()
 
-      if @port
-        @innerStart()
-        callback?() if @server
-      else
-        portfinder.getPort (err, port) =>
-          @port = port
-          @innerStart()
-          callback?() if @server
+      # Find free port
+      portfinder.basePort = @basePort
+      portfinder.getPort (err, port) =>
+        try
+          # Build CLI options
+          options = ["-S", "#{@host}:#{port}"]
+
+          if @overrideErrorlog
+            # ini settings for errors to be logged to stderr
+            options.push "-d", "error_log=", "-d", "log_errors=1", "-d", "display_errors="
+
+          if @ini
+            # Set specified php.ini file
+            options.push "-c", @ini
+
+          # Spawn PHP server process
+          @server = spawn @path, options, env: process.env, cwd: @documentRoot
+
+          # Catch process failures
+          @server.once 'exit', (code) =>
+            @emitter.emit 'error', code if code != 0
+
+          @server.on 'error', (err) =>
+            @emitter.emit 'error', err
+
+          # Relay PHP output
+          @server.stdout.on 'data', (data) =>
+            @emitter.emit 'message', data.asciiSlice()
+
+          @server.stderr.on 'data', (data) =>
+            @emitter.emit 'message', data.asciiSlice()
+
+          # Record server state
+          @href = "http://#{@host}:#{port}"
+
+          # Once process has spawned execute callback
+          callback?()
+
+        catch err
+          # Failure
+          @server = null
+          @emitter.emit 'error', code: null, message: err
+
 
     stop: (callback) ->
-      @innerStop() if @server
-      callback?()
-
-
-    innerStart: ->
-      try
-        options = ["-S", "#{@host}:#{@port}"]
-        if @overrideErrorlog
-          options.push "-d", "error_log=", "-d", "log_errors=1", "-d", "display_errors="
-        if @ini
-          options.push "-c", @ini
-
-        @server = spawn @path, options, env: process.env, cwd: @documentRoot
-
+      if @server
+        # Replace exit listener
+        @server.removeAllListeners 'exit'
         @server.once 'exit', (code) =>
-          @emitter.emit 'error', code if code != 0
+          @server.removeAllListeners
 
-        @server.on 'error', (err) =>
-          @emitter.emit 'error', err
+          @href = null
 
-        @server.stderr.on 'data', (data) =>
-          @emitter.emit 'message', data.asciiSlice()
+          @server = null
+          callback?()
 
-        @href = "http://#{@host}:#{@port}"
-
-      catch err
-        @server = null
-        @emitter.emit 'error', err
-
-
-    innerStop: ->
-      # Send Ctrl+C
-      @server.kill('SIGINT')
-      @server = null
-
-      @href = null
+        # Send Ctrl+C
+        @server.kill 'SIGINT'

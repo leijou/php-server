@@ -40,16 +40,26 @@ module.exports =
     atom.commands.add 'atom-workspace', "php-server:clear", => @clear()
     atom.commands.add 'atom-workspace', "php-server:stop", => @stop()
 
+
   deactivate: ->
     @stop()
+
 
   startTree: ->
     @start(atom.packages.getLoadedPackage('tree-view').serialize().selectedPath)
 
+
   startDocument: ->
     @start(atom.workspace.getActiveEditor()?.getPath())
 
+
   start: (documentroot) ->
+    # Stop server if currently running
+    if @server
+      @server.stop()
+      @server = null
+
+    # Launch server in given working directory
     if !documentroot
       documentroot = atom.project.getPath()
 
@@ -58,38 +68,41 @@ module.exports =
       basename = documentroot.split(/[\\/]/).pop()
       documentroot = documentroot.substring(0, Math.max(documentroot.lastIndexOf("/"), documentroot.lastIndexOf("\\")))
 
-    @server?.destroy()
     @server = new PhpServerServer documentroot
 
-    @server.onError (err) =>
-      console.error err
-
+    # Pass package settings
     @server.path = atom.config.get('php-server.phpPath')
     @server.host = atom.config.get('php-server.localhost')
     @server.basePort = atom.config.get('php-server.startPort')
     @server.ini = atom.config.get('php-server.phpIni')
     @server.overrideErrorlog = atom.config.get('php-server.overrideErrorlog')
 
+    # Listen
+    @server.on 'message', (message) =>
+      @view?.addMessage message
+
+    @server.on 'error', (err) =>
+      console.error err
+
+      if @view
+        if err.code == 'ENOENT'
+          @view.addError "PHP Server could not launch"
+          @view.addError "Have you defined the right path to PHP in your settings? Using #{@server.path}"
+        else if err.code == 'ENOTDIR'
+          @view.addError "PHP Server could not launch"
+          @view.addError "Not a directory? Using #{@server.documentRoot}"
+        else
+          @view.addError err.message
+
+    # Set up panel
     if !@view
       @view = new PhpServerView(
           title: "PHP Server: Launching..."
       )
 
-      @server.onMessage (message) =>
-        @view.addMessage message
-
-      @server.onError (message) =>
-        if message.code == 'ENOENT'
-          @view.addError "PHP Server could not launch"
-          @view.addError "Have you defined the right path to PHP in your settings? Using #{@server.path}"
-        else if message.code == 'ENOTDIR'
-          @view.addError "PHP Server could not launch"
-          @view.addError "Not a directory? Using #{@server.documentRoot}"
-        else
-          @view.addError message.message
-
     @view.attach()
 
+    # Start server
     @server.start =>
       @view.setTitle "PHP Server: <a href=\"#{@server.href}\">#{@server.href}</a>", true
 
@@ -100,16 +113,19 @@ module.exports =
       if basename
           href += '/' + basename
 
+      # Launch browser
       open href
 
+
   stop: ->
-    @server?.destroy()
+    @server?.stop()
 
     @view?.clear()
     @view?.detach()
 
     @server = null
     @view = null
+
 
   clear: ->
     @view?.clear()
