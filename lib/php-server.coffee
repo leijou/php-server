@@ -18,6 +18,16 @@ module.exports =
       description: 'Will search for an empty port starting from here'
       type: 'integer'
       default: 8000
+    phpIni:
+      title: 'Custom php.ini file'
+      description: 'Will replace your standard CLI php.ini settings'
+      type: 'string'
+      default: ''
+    overrideErrorlog:
+      title: 'Override error log'
+      description: 'Redirect error log to panel in Atom. Overrides ini settings'
+      type: 'boolean'
+      default: true
 
   server: null
   view: null
@@ -57,6 +67,8 @@ module.exports =
     @server.path = atom.config.get('php-server.phpPath')
     @server.host = atom.config.get('php-server.localhost')
     @server.basePort = atom.config.get('php-server.startPort')
+    @server.ini = atom.config.get('php-server.phpIni')
+    @server.overrideErrorlog = atom.config.get('php-server.overrideErrorlog')
 
     if !@view
       @view = new PhpServerView(

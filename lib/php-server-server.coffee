@@ -8,6 +8,8 @@ module.exports =
     path: 'php'
     host: 'localhost'
     basePort: 8000
+    ini: ''
+    overrideErrorlog: true
 
     # Properties
     documentRoot: null
@@ -51,7 +53,13 @@ module.exports =
 
     innerStart: ->
       try
-        @server = spawn @path, ["-S", "#{@host}:#{@port}"], env: process.env, cwd: @documentRoot
+        options = ["-S", "#{@host}:#{@port}"]
+        if @overrideErrorlog
+          options.push "-d", "error_log=", "-d", "log_errors=1", "-d", "display_errors="
+        if @ini
+          options.push "-c", @ini
+
+        @server = spawn @path, options, env: process.env, cwd: @documentRoot
 
         @server.once 'exit', (code) =>
           @emitter.emit 'error', code if code != 0
