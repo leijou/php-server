@@ -19,6 +19,7 @@
   "dependencies": {
     "portfinder": "latest",
     "open": "latest",
-    "atom-message-panel": "latest"
+    "atom-message-panel": "latest",
+    "atom-space-pen-views": "^2.0.3"
   }
 }
