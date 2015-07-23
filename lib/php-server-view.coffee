@@ -1,4 +1,4 @@
-{$, View} = require 'atom'
+{$, View} = require 'atom-space-pen-views'
 {MessagePanelView, PlainMessageView, LineMessageView} = require 'atom-message-panel'
 
 module.exports =

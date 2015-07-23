@@ -1,7 +1,7 @@
 {
   "name": "php-server",
   "main": "./lib/php-server",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Run a local PHP server from within Atom, displaying the log in a bottom panel",
   "activationCommands": {
     "atom-workspace": "php-server:start",
@@ -19,6 +19,7 @@
   "dependencies": {
     "portfinder": "latest",
     "open": "latest",
-    "atom-message-panel": "latest"
+    "atom-message-panel": "latest",
+    "atom-space-pen-views": "^2.0.3"
   }
 }
