@@ -57,7 +57,7 @@ module.exports =
 
 
   startDocument: ->
-    @start(atom.workspace.getActiveEditor()?.getPath())
+    @start(atom.workspace.getActiveTextEditor()?.getPath())
 
 
   splitPath: (path) ->
@@ -75,9 +75,22 @@ module.exports =
       @server.stop()
       @server = null
 
+    # Set up panel
+    if !@view
+      @view = new PhpServerView(
+        title: "PHP Server: Launching..."
+      )
+
+    @view.attach()
+
     # Launch server in given working directory
     if !documentroot
-      documentroot = atom.project.getPath()
+      documentroot = atom.project.getPaths()[0]
+
+    if !documentroot
+      @view.addError "PHP Server could not launch"
+      @view.addError "Atom project directory not found"
+      return
 
     [documentroot, basename] = @splitPath documentroot
 
@@ -107,14 +120,6 @@ module.exports =
         else
           @view.addError err.message
 
-    # Set up panel
-    if !@view
-      @view = new PhpServerView(
-          title: "PHP Server: Launching..."
-      )
-
-    @view.attach()
-
     # Start server
     @server.start =>
       @view.setTitle "PHP Server: <a href=\"#{@server.href}\">#{@server.href}</a>", true
@@ -124,7 +129,7 @@ module.exports =
 
       href = @server.href
       if basename
-          href += '/' + basename
+        href += '/' + basename
 
       # Launch browser
       open href
