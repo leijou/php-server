@@ -29,6 +29,11 @@ module.exports =
       description: 'Redirect error log to panel in Atom. Overrides ini settings. May not work on Windows'
       type: 'boolean'
       default: false
+    expandOnRequest:
+      title: 'Expand on request'
+      description: 'Expand the server console window when new requests are received by the server'
+      type: 'boolean'
+      default: true
 
   server: null
   view: null
@@ -102,10 +107,11 @@ module.exports =
     @server.basePort = atom.config.get('php-server.startPort')
     @server.ini = atom.config.get('php-server.phpIni')
     @server.overrideErrorlog = atom.config.get('php-server.overrideErrorlog')
+    @server.expandOnRequest = atom.config.get('php-server.expandOnRequest')
 
     # Listen
     @server.on 'message', (message) =>
-      @view?.addMessage message
+      @view?.addMessage message, @server.expandOnRequest
 
     @server.on 'error', (err) =>
       console.error err
@@ -124,8 +130,8 @@ module.exports =
     @server.start =>
       @view.setTitle "PHP Server: <a href=\"#{@server.href}\">#{@server.href}</a>", true
 
-      @view.addMessage "Listening on #{@server.href}"
-      @view.addMessage "Document root is #{@server.documentRoot}"
+      @view.addMessage "Listening on #{@server.href}", @server.expandOnRequest
+      @view.addMessage "Document root is #{@server.documentRoot}", @server.expandOnRequest
 
       href = @server.href
       if basename
