@@ -25,3 +25,6 @@ module.exports =
         message: lines
         className: 'text-error'
       ))
+
+    hide: ->
+      @toggle() if @body.isVisible()

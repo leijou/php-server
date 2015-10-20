@@ -109,6 +109,10 @@ module.exports =
     @server.overrideErrorlog = atom.config.get('php-server.overrideErrorlog')
     @server.expandOnRequest = atom.config.get('php-server.expandOnRequest')
 
+    # Collapse view if expandOnRequest is checked
+    if !@server.expandOnRequest
+      @view?.hide()
+
     # Listen
     @server.on 'message', (message) =>
       @view?.addMessage message, @server.expandOnRequest
