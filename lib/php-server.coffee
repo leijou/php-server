@@ -29,11 +29,13 @@ module.exports =
       description: 'Redirect error log to panel in Atom. Overrides ini settings. May not work on Windows'
       type: 'boolean'
       default: false
-    expandOnRequest:
-      title: 'Expand on request'
-      description: 'Expand the server console window when new requests are received by the server'
-      type: 'boolean'
-      default: true
+    expandOnLog:
+      title: 'Expand on log message'
+      description: 'Expands the server console window when selected requests are received by the server'
+      type: 'string'
+      enum: ['all', 'none']
+      default: 'all'
+
 
   server: null
   view: null
@@ -88,6 +90,10 @@ module.exports =
 
     @view.attach()
 
+    # Collapse view if expandOnLog is set to none
+    if atom.config.get('php-server.expandOnLog') == 'none'
+      @view?.hide()
+
     # Launch server in given working directory
     if !documentroot
       documentroot = atom.project.getPaths()[0]
@@ -107,15 +113,11 @@ module.exports =
     @server.basePort = atom.config.get('php-server.startPort')
     @server.ini = atom.config.get('php-server.phpIni')
     @server.overrideErrorlog = atom.config.get('php-server.overrideErrorlog')
-    @server.expandOnRequest = atom.config.get('php-server.expandOnRequest')
-
-    # Collapse view if expandOnRequest is checked
-    if !@server.expandOnRequest
-      @view?.hide()
+    @server.expandOnLog = atom.config.get('php-server.expandOnLog')
 
     # Listen
     @server.on 'message', (message) =>
-      @view?.addMessage message, @server.expandOnRequest
+      @view?.addMessage message, @server.expandOnLog
 
     @server.on 'error', (err) =>
       console.error err
@@ -134,8 +136,8 @@ module.exports =
     @server.start =>
       @view.setTitle "PHP Server: <a href=\"#{@server.href}\">#{@server.href}</a>", true
 
-      @view.addMessage "Listening on #{@server.href}", @server.expandOnRequest
-      @view.addMessage "Document root is #{@server.documentRoot}", @server.expandOnRequest
+      @view.addMessage "Listening on #{@server.href}", @server.expandOnLog
+      @view.addMessage "Document root is #{@server.documentRoot}", @server.expandOnLog
 
       href = @server.href
       if basename

@@ -3,7 +3,7 @@
 
 module.exports =
   class PhpServerView extends MessagePanelView
-    addMessage: (lines, expand) ->
+    addMessage: (lines, logLevel) ->
       for text in lines.split "\n"
         linematch = /in ([a-z\\\/\.\-_]+) on line ([0-9]+)$/i
         match = text.match linematch
@@ -17,7 +17,7 @@ module.exports =
           @add(new PlainMessageView(
             message: text
           ))
-        @toggle() if !@body.isVisible() && expand
+        @toggle() if !@body.isVisible() && logLevel == 'all'
         @body.scrollToBottom()
 
     addError: (lines) ->
