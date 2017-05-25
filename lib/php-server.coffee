@@ -55,11 +55,11 @@ module.exports =
 
 
   startTree: ->
-    @start atom.packages.getLoadedPackage('tree-view').serialize().selectedPath
+    @start atom.packages.getLoadedPackage('tree-view').mainModule.treeView.selectedPath
 
 
   startTreeRoute: ->
-    [path, basename] = @splitPath atom.packages.getLoadedPackage('tree-view').serialize().selectedPath
+    [path, basename] = @splitPath atom.packages.getLoadedPackage('tree-view').mainModule.treeView.selectedPath
     @start path, basename
 
 
