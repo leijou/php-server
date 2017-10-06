@@ -35,6 +35,11 @@ module.exports =
       type: 'string'
       enum: ['all', 'none']
       default: 'all'
+    openInBrowser:
+      title: 'Open in browser'
+      description: 'Open browser at local URL on server start'
+      type: 'boolean'
+      default: true
 
 
   server: null
@@ -143,7 +148,8 @@ module.exports =
         href += '/' + basename
 
       # Launch browser
-      open href
+      if atom.config.get('php-server.openInBrowser')
+        open href
 
 
   stop: ->
