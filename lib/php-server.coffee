@@ -156,7 +156,7 @@ module.exports =
     @server?.stop()
 
     @view?.clear()
-    @view?.detach()
+    @view?.close()
 
     @server = null
     @view = null
