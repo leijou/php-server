@@ -17,6 +17,7 @@
     label: 'PHP Server',
     submenu: [
       { label: 'Start in project root', command: 'php-server:start' }
+      { label: 'Start in folder public in project root', command: 'php-server:start-public' }
       { label: 'Start in folder selected in tree', command: 'php-server:start-tree' }
       { label: 'Start in folder of current file', command: 'php-server:start-document' }
     ]

@@ -48,6 +48,7 @@ module.exports =
 
   activate: ->
     atom.commands.add 'atom-workspace', "php-server:start", => @start()
+    atom.commands.add 'atom-workspace', "php-server:start-public", => @startPublic()
     atom.commands.add 'atom-workspace', "php-server:start-tree", => @startTree()
     atom.commands.add 'atom-workspace', "php-server:start-tree-route", => @startTreeRoute()
     atom.commands.add 'atom-workspace', "php-server:start-document", => @startDocument()
@@ -58,6 +59,10 @@ module.exports =
   deactivate: ->
     @stop()
 
+
+  startPublic: ->
+    documentroot = atom.project.getPaths()[0]+"/public"
+    @start documentroot
 
   startTree: ->
     @start atom.packages.getLoadedPackage('tree-view').mainModule.treeView.selectedPath
