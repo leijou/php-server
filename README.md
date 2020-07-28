@@ -2,6 +2,10 @@
 
 An Atom package to run PHP's built-in development server and display the log in a bottom pane. Can be started from any folder in the tree, the currently opened file, or the project root.
 
+> :exclamation::exclamation::exclamation:
+> This package is no longer maintained. Please fork or seek alternatives
+> :exclamation::exclamation::exclamation:
+
 ![Screenshot](http://i.imgur.com/FhVtl9v.png)
 
 ## Requirements
