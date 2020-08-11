@@ -17,6 +17,7 @@ If `php` is not in your system PATH you will need to put in the full path to you
 ## Commands
 
 * `php-server:start` &mdash; Start / Restart PHP server from project path
+* `php-server:start-public` &mdash; Start / Restart PHP server from folder public in project path
 * `php-server:start-tree` &mdash; Start / Restart PHP server from folder/file selected in tree
 * `php-server:start-document` &mdash; Start / Restart PHP server from currently open file
 * `php-server:stop` &mdash; Stop running PHP server

@@ -4,7 +4,10 @@
   "version": "0.8.0",
   "description": "Run a local PHP server from within Atom, displaying the log in a bottom panel",
   "activationCommands": {
-    "atom-workspace": "php-server:start",
+    "atom-workspace": [
+      "php-server:start",
+      "php-server:start-public"
+    ],
     ".tree-view": [
       "php-server:start-tree",
       "php-server:start-tree-route"
