@@ -14,6 +14,8 @@ PHP must be installed on your machine, version 5.4 or greater.
 
 If `php` is not in your system PATH you will need to put in the full path to your PHP executable in the settings of this package.
 
+For `Windows` operating systems, PHP will need to be installed and configured as per the instructions found at the following link: https://videlais.com/2019/05/11/using-atom-as-a-built-in-php-development-server/
+
 ## Commands
 
 * `php-server:start` &mdash; Start / Restart PHP server from project path
