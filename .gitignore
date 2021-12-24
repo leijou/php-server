@@ -1,3 +1,9 @@
 .DS_Store
 npm-debug.log
 node_modules
+package.json
+README.md
+menus/php-server.cson
+LICENSE.md
+styles/php-server.less
+.npmignore
