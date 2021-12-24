@@ -7,3 +7,6 @@ menus/php-server.cson
 LICENSE.md
 styles/php-server.less
 .npmignore
+README.md
+package.json
+LICENSE.md
