@@ -12,6 +12,7 @@ module.exports =
     overrideErrorlog: true
 
     # Properties
+    allowRemote: false
     documentRoot: null
     routerFile: null
     href: null
@@ -60,6 +61,10 @@ module.exports =
             # Use given file as request router
             options.push @routerFile
 
+          if @allowRemote
+            #override spawned
+            options = []
+            options.push "-S", "0.0.0.0:#{port}"
 
           # Spawn PHP server process
           @server = spawn @path, options, env: process.env, cwd: @documentRoot

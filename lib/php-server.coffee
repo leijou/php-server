@@ -19,6 +19,11 @@ module.exports =
       description: 'Will search for an empty port starting from here'
       type: 'integer'
       default: 8000
+    allowRemote:
+      title: 'Override for Local Network'
+      description: 'Set the hostname as 0.0.0.0 *wildcard* for local network access'
+      type: 'boolean'
+      default: false
     phpIni:
       title: 'Custom php.ini file'
       description: 'Will replace your standard CLI php.ini settings'
@@ -116,6 +121,7 @@ module.exports =
     @server.path = atom.config.get('php-server.phpPath')
     @server.host = atom.config.get('php-server.localhost')
     @server.basePort = atom.config.get('php-server.startPort')
+    @server.allowRemote = atom.config.get('php-server.allowRemote')
     @server.ini = atom.config.get('php-server.phpIni')
     @server.overrideErrorlog = atom.config.get('php-server.overrideErrorlog')
 
